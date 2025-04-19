@@ -64,3 +64,4 @@ class UserBlockForm(forms.ModelForm):
         labels = {
             'is_blocked': _('Заблокировать пользователя'),
         }
+
