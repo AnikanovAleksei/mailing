@@ -1,0 +1,46 @@
+{% extends 'mailing/base.html' %}
+
+{% block title %}
+  {% if form.instance.is_blocked %}
+    Разблокировать пользователя {{ form.instance.email }}
+  {% else %}
+    Заблокировать пользователя {{ form.instance.email }}
+  {% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <h4>
+            {% if form.instance.is_blocked %}
+                Разблокировать пользователя
+            {% else %}
+                Заблокировать пользователя
+            {% endif %}
+        </h4>
+    </div>
+    <div class="card-body">
+        <form method="post">
+            {% csrf_token %}
+            
+            <div class="form-group">
+                <p>Пользователь: <strong>{{ form.instance.email }}</strong></p>
+                <p>Имя: <strong>{{ form.instance.get_full_name }}</strong></p>
+            </div>
+            
+            {{ form.as_p }}
+            
+            <div class="form-group mt-4">
+                <button type="submit" class="btn btn-{% if form.instance.is_blocked %}success{% else %}danger{% endif %}">
+                    {% if form.instance.is_blocked %}
+                        Разблокировать
+                    {% else %}
+                        Заблокировать
+                    {% endif %}
+                </button>
+                <a href="{% url 'mailing:user_list' %}" class="btn btn-outline-secondary">Отмена</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
