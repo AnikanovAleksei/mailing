@@ -8,4 +8,3 @@ urlpatterns = [
     path('', include('newsletter_app.urls', namespace='mailing')),
     path('users/', include('users.urls', namespace='users')),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
-
