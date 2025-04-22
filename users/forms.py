@@ -73,3 +73,4 @@ class UserProfileForm(forms.ModelForm):
         widgets = {
             'email': forms.EmailInput(attrs={'class': 'form-control'}),
         }
+
