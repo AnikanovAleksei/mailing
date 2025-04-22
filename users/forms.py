@@ -64,3 +64,12 @@ class UserBlockForm(forms.ModelForm):
         labels = {
             'is_blocked': _('Заблокировать пользователя'),
         }
+
+
+class UserProfileForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ['email', 'phone_number', 'avatar',]
+        widgets = {
+            'email': forms.EmailInput(attrs={'class': 'form-control'}),
+        }

@@ -9,6 +9,7 @@ click-repl==0.3.0
 Django==5.2
 django-crispy-forms==2.4
 kombu==5.5.3
+pillow==11.2.1
 prompt_toolkit==3.0.51
 psycopg2==2.9.10
 python-dateutil==2.9.0.post0

@@ -1,11 +1,22 @@
-from django.shortcuts import render, redirect
-from django.urls import reverse_lazy
-from django.views.generic import CreateView
-from django.contrib.auth.views import LoginView, LogoutView, PasswordResetView, PasswordResetConfirmView
-from django.contrib import messages
+from django.contrib.auth.views import (
+    LoginView,
+    LogoutView,
+    PasswordResetView,
+    PasswordResetConfirmView
+)
 from django.contrib.auth import login
+from django.views.generic import CreateView, UpdateView
+from django.urls import reverse_lazy
+from .forms import (
+    UserRegisterForm,
+    UserLoginForm,
+    UserPasswordResetForm,
+    UserSetPasswordForm,
+    UserProfileForm
+)
+from django.contrib.auth import get_user_model
 
-from .forms import UserRegisterForm, UserLoginForm, UserPasswordResetForm, UserSetPasswordForm
+User = get_user_model()
 
 
 class UserRegisterView(CreateView):
@@ -15,7 +26,6 @@ class UserRegisterView(CreateView):
 
     def form_valid(self, form):
         response = super().form_valid(form)
-        messages.success(self.request, 'Вы успешно зарегистрировались!')
         login(self.request, self.object)
         return response
 
@@ -23,20 +33,11 @@ class UserRegisterView(CreateView):
 class UserLoginView(LoginView):
     form_class = UserLoginForm
     template_name = 'users/login.html'
-
-    def form_valid(self, form):
-        messages.success(self.request, 'Вы успешно вошли в систему!')
-        return super().form_valid(form)
-
-    def form_invalid(self, form):
-        messages.error(self.request, 'Неверный email или пароль.')
-        return super().form_invalid(form)
+    redirect_authenticated_user = True
 
 
 class UserLogoutView(LogoutView):
-    def dispatch(self, request, *args, **kwargs):
-        messages.success(request, 'Вы успешно вышли из системы.')
-        return super().dispatch(request, *args, **kwargs)
+    next_page = reverse_lazy('mailing:home')
 
 
 class UserPasswordResetView(PasswordResetView):
@@ -45,17 +46,18 @@ class UserPasswordResetView(PasswordResetView):
     email_template_name = 'users/password_reset_email.html'
     success_url = reverse_lazy('users:login')
 
-    def form_valid(self, form):
-        messages.success(self.request, 'Инструкции по сбросу пароля отправлены на ваш email.')
-        return super().form_valid(form)
-
 
 class UserPasswordResetConfirmView(PasswordResetConfirmView):
     form_class = UserSetPasswordForm
     template_name = 'users/password_reset_confirm.html'
     success_url = reverse_lazy('users:login')
 
-    def form_valid(self, form):
-        messages.success(self.request, 'Ваш пароль успешно изменен.')
-        return super().form_valid(form)
 
+class UserProfileView(UpdateView):
+    model = User
+    form_class = UserProfileForm
+    template_name = 'users/profile.html'
+    success_url = reverse_lazy('users:profile')
+
+    def get_object(self, queryset=None):
+        return self.request.user
